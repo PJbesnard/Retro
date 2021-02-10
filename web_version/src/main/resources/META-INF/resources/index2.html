@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="utf-8"/>
+    <title>Quarkus REST service</title>
+    <!-- Load AngularJS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript">
+      var app = angular.module("PersonManagement", []);
+ 
+      //Controller Part
+      app.controller("PersonManagementController", function ($scope, $http) {
+ 
+        //Initialize page with empty data
+        $scope.options = [];
+        $scope.message = [];
+        $scope.form = "";
+
+        $scope.lambda = 0;
+        $scope.concat = 0;
+        $scope.nestmates = 0;
+        $scope.record = 0;
+        $scope.twr = 0;
+        $scope.features = "";
+
+        $scope.target = "Pas de Target";
+        $scope.version = 0;
+
+        $scope.help = 0;
+        $scope.info = 0;
+
+        document.getElementById("helpBtn").addEventListener("click", function(){
+          ($scope.help == 0) ? $scope.help = 1 : $scope.help = 0;
+        }); 
+
+        document.getElementById("infoBtn").addEventListener("click", function(){
+          ($scope.info == 0) ? $scope.info = 1 : $scope.info = 0;
+        }); 
+        
+        document.getElementById("java-6").addEventListener("click", function(){
+          $scope.target = "Java 6";
+          $scope.version = 6;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-7").addEventListener("click", function(){
+          $scope.target = "Java 7";
+          $scope.version = 7;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-8").addEventListener("click", function(){
+          $scope.target = "Java 8";
+          $scope.version = 8;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-9").addEventListener("click", function(){
+          $scope.target = "Java 9";
+          $scope.version = 9;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-10").addEventListener("click", function(){
+          $scope.target = "Java 10";
+          $scope.version = 10;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-11").addEventListener("click", function(){
+          $scope.target = "Java 11";
+          $scope.version = 11;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-12").addEventListener("click", function(){
+          $scope.target = "Java 12";
+          $scope.version = 12;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("java-13").addEventListener("click", function(){
+          $scope.target = "Java 13";
+          $scope.version = 13;
+          _refreshPageData();
+        }); 
+
+        document.getElementById("lambdaFeature").addEventListener("click", function(){
+          ($scope.lambda == 0) ? $scope.lambda = 1 : $scope.lambda = 0;
+        }); 
+
+        document.getElementById("concatFeature").addEventListener("click", function(){
+          ($scope.concat == 0) ? $scope.concat = 1 : $scope.concat = 0;
+        });
+
+        document.getElementById("nestmastesFeature").addEventListener("click", function(){
+          ($scope.nestmates == 0) ? $scope.nestmates = 1 : $scope.nestmates = 0;
+        });
+
+        document.getElementById("recordFeature").addEventListener("click", function(){
+          ($scope.record == 0) ? $scope.record = 1 : $scope.record = 0;
+        });
+
+        document.getElementById("twrFeature").addEventListener("click", function(){
+          ($scope.twr == 0) ? $scope.twr = 1 : $scope.twr = 0;
+        });
+
+        /*
+        $scope.form = {
+          name: "",
+          surname: ""
+        };*/
+ 
+        //Now load the data from server
+        _refreshPageData();
+ 
+        //HTTP POST methods for add data
+        $scope.add = function () {
+          //var data = { "name": $scope.form.name, "surname": $scope.form.surname };
+          var data = "";
+          if($scope.help == 1){
+            data += "-help ";
+          }
+          if($scope.info == 1){
+            data += "-info ";
+          }
+          if($scope.version > 0){
+            data += ("-target " + $scope.version + " ");
+          }
+
+          if($scope.lambda + $scope.concat + $scope.nestmates + $scope.twr + $scope.record > 0){
+            data += "-features ";
+          }
+          if($scope.lambda > 0){
+            data += "lambda,";
+          }
+          if($scope.concat > 0){
+            data += "concatenation,";
+          }
+          if($scope.nestmates > 0){
+            data += "nesmates,";
+          }
+          if($scope.twr > 0){
+            data += "TRY_WITH_RESOURCES,";
+          }
+          if($scope.record > 0){
+            data += "record";
+          }
+          if($scope.lambda + $scope.concat + $scope.nestmates + $scope.twr + $scope.record > 0){
+            data += " ";
+          }
+
+          data += $scope.form;
+
+          $http({
+            method: "POST",
+            url: '/options',
+            data: angular.toJson(data),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(_success, _error);
+        };
+ 
+        
+        //HTTP GET- get all persons collection
+        function _refreshPageData() {
+          $http({
+            method: 'GET',
+            url: '/options'
+          }).then(function successCallback(response) {
+            $scope.message = response.data;
+          }, function errorCallback(response) {
+            console.log(response.statusText);
+          });
+        }
+ 
+        function _success(response) {
+          _refreshPageData();
+          _clearForm();
+        }
+ 
+        function _error(response) {
+          alert(response.data.message || response.statusText);
+        }
+ 
+        //Clear the form
+        function _clearForm() {
+          $scope.form = "";
+        }
+        
+      });
+    </script>
+</head>
+<body ng-app="PersonManagement" ng-controller="PersonManagementController">
+
+<button type="button" class="btn btn-outline-success" data-toggle="button" aria-pressed="false" autocomplete="off" id="helpBtn">
+  Help
+</button>
+
+<button type="button" class="btn btn-outline-primary" data-toggle="button" aria-pressed="false" autocomplete="off" id="infoBtn">
+  info
+</button> 
+
+<div class="btn-group">
+  <button type="button" class="btn btn-primary" ng-model="target">{{target}}</button>
+  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  </button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" id="java-6">Java 6</a>
+    <a class="dropdown-item" id="java-7">Java 7</a>
+    <a class="dropdown-item" id="java-8">Java 8</a>
+    <a class="dropdown-item" id="java-9">Java 9</a>
+    <a class="dropdown-item" id="java-10">Java 10</a>
+    <a class="dropdown-item" id="java-11">Java 11</a>
+    <a class="dropdown-item" id="java-12">Java 12</a>
+    <a class="dropdown-item" id="java-13">Java 13</a>
+  </div>
+</div>
+
+<button type="button" class="btn btn-outline-primary" data-toggle="button" aria-pressed="false" autocomplete="off" id="lambdaFeature">
+  Lambda
+</button> 
+
+<button type="button" class="btn btn-outline-primary" data-toggle="button" aria-pressed="false" autocomplete="off" id="concatFeature">
+  Concatenation
+</button> 
+
+<button type="button" class="btn btn-outline-primary" data-toggle="button" aria-pressed="false" autocomplete="off" id="nestmastesFeature">
+  Nestmates
+</button> 
+
+<button type="button" class="btn btn-outline-primary" data-toggle="button" aria-pressed="false" autocomplete="off" id="recordFeature">
+  Record
+</button> 
+
+<button type="button" class="btn btn-outline-primary" data-toggle="button" aria-pressed="false" autocomplete="off" id="twrFeature">
+  Try With Ressources
+</button> 
+
+<div class="container">
+    <h1>RETRO</h1>
+ 
+    <form ng-submit="add()">
+        <div class="row">
+            <div class="col-6"><input type="text" placeholder="retro <target>" ng-model="form" size="60"/></div>
+        </div>
+        <input type="submit" value="Apply"/>
+    </form>
+ 
+    <h3>Results</h3>
+      <div ng-repeat="m in message">{{m}}</div>
+      <!--
+        <div class="col-4">{{ person.name }}</div>
+        <div class="col-8">{{ person.surname }}</div>-->
+</div>
+ 
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

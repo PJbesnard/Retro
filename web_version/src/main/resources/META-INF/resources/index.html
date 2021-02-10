@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
+  <title>
+    • Retro • 
+  </title>
+  <!--     Fonts and icons     -->
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- Nucleo Icons -->
+  <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link href="./assets/css/blk-design-system.css?v=1.0.0" rel="stylesheet" />
+  <!-- Load AngularJS -->
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script type="text/javascript">
+    var app = angular.module("PersonManagement", []);
+
+    //Controller Part
+    app.controller("PersonManagementController", function ($scope, $http) {
+
+      //Initialize page with empty data
+      $scope.options = [];
+      $scope.message = [];
+      $scope.form = "";
+
+      $scope.lambda = 0;
+      $scope.concat = 0;
+      $scope.nestmates = 0;
+      $scope.record = 0;
+      $scope.twr = 0;
+      $scope.features = "";
+
+      $scope.target = "Pas de Target";
+      $scope.version = 0;
+
+      $scope.help = 0;
+      $scope.info = 0;
+
+      
+      document.getElementById("helpBtn").addEventListener("click", function(){
+        console.log("bite");
+        ($scope.help == 0) ? $scope.help = 1 : $scope.help = 0;
+      }); 
+
+
+      
+      document.getElementById("infoBtn").addEventListener("click", function(){
+        ($scope.info == 0) ? $scope.info = 1 : $scope.info = 0;
+      });
+      
+      document.getElementById("java-6").addEventListener("click", function(){
+        $scope.target = "Java 6";
+        $scope.version = 6;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-7").addEventListener("click", function(){
+        $scope.target = "Java 7";
+        $scope.version = 7;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-8").addEventListener("click", function(){
+        $scope.target = "Java 8";
+        $scope.version = 8;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-9").addEventListener("click", function(){
+        $scope.target = "Java 9";
+        $scope.version = 9;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-10").addEventListener("click", function(){
+        $scope.target = "Java 10";
+        $scope.version = 10;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-11").addEventListener("click", function(){
+        $scope.target = "Java 11";
+        $scope.version = 11;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-12").addEventListener("click", function(){
+        $scope.target = "Java 12";
+        $scope.version = 12;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("java-13").addEventListener("click", function(){
+        $scope.target = "Java 13";
+        $scope.version = 13;
+        _refreshPageData();
+      }); 
+
+      document.getElementById("lambdaFeature").addEventListener("click", function(){
+        ($scope.lambda == 0) ? $scope.lambda = 1 : $scope.lambda = 0;
+      }); 
+
+      document.getElementById("concatFeature").addEventListener("click", function(){
+        ($scope.concat == 0) ? $scope.concat = 1 : $scope.concat = 0;
+      });
+
+      document.getElementById("nestmatesFeature").addEventListener("click", function(){
+        ($scope.nestmates == 0) ? $scope.nestmates = 1 : $scope.nestmates = 0;
+      });
+
+      document.getElementById("recordFeature").addEventListener("click", function(){
+        ($scope.record == 0) ? $scope.record = 1 : $scope.record = 0;
+      });
+
+      document.getElementById("twrFeature").addEventListener("click", function(){
+        ($scope.twr == 0) ? $scope.twr = 1 : $scope.twr = 0;
+      });
+
+      //Now load the data from server
+      _refreshPageData();
+
+      //HTTP POST methods for add data
+      $scope.add = function () {
+        var data = "";
+        if($scope.help == 1){
+          data += "-help ";
+        }
+        if($scope.info == 1){
+          data += "-info ";
+        }
+        if($scope.version > 0){
+          data += ("-target " + $scope.version + " ");
+        }
+
+        if($scope.lambda + $scope.concat + $scope.nestmates + $scope.twr + $scope.record > 0){
+          data += "-features ";
+        }
+        if($scope.lambda > 0){
+          data += "lambda,";
+        }
+        if($scope.concat > 0){
+          data += "concatenation,";
+        }
+        if($scope.nestmates > 0){
+          data += "nesmates,";
+        }
+        if($scope.twr > 0){
+          data += "TRY_WITH_RESOURCES,";
+        }
+        if($scope.record > 0){
+          data += "record";
+        }
+        if($scope.lambda + $scope.concat + $scope.nestmates + $scope.twr + $scope.record > 0){
+          data += " ";
+        }
+
+        data += $scope.form;
+
+        $http({
+          method: "POST",
+          url: '/options',
+          data: angular.toJson(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(_success, _error);
+      };
+
+
+      //HTTP GET- get all persons collection
+      function _refreshPageData() {
+        $http({
+          method: 'GET',
+          url: '/options'
+        }).then(function successCallback(response) {
+          $scope.message = response.data;
+        }, function errorCallback(response) {
+          console.log(response.statusText);
+        });
+      }
+
+      function _success(response) {
+        _refreshPageData();
+        _clearForm();
+      }
+
+      function _error(response) {
+        alert(response.data.message || response.statusText);
+      }
+
+      //Clear the form
+      function _clearForm() {
+        $scope.options = [];
+        $scope.message = [];
+        $scope.form = "";
+        $scope.help = 0;
+      }
+      
+    });
+    function lambdaFun(){
+      if($(obj).is(":checked")){
+        $scope.lambda = 1;
+      }else{
+        $scope.lambda = 0;
+      }
+    }
+
+      function concatFun(){
+      if($(obj).is(":checked")){
+        $scope.concat = 1;
+      }else{
+        $scope.concat = 0;
+      }
+      }
+
+      function nestmatesFun(){
+        if($(obj).is(":checked")){
+          $scope.nestmates = 1;
+        }else{
+          $scope.nestmates = 0;
+        }
+      }
+
+      function twrFun(){
+        if($(obj).is(":checked")){
+          $scope.twr = 1;
+        }else{
+          $scope.twr = 0;
+        }
+      }
+
+      function infoFun(obj){
+        if($(obj).is(":checked")){
+          $scope.info = 1;
+        }else{
+          $scope.info = 0;
+        }
+      }
+
+      function recordFun(){
+        if($(obj).is(":checked")){
+          $scope.record = 1;
+        }else{
+          $scope.record = 0;
+        }
+      }
+  </script>
+</head>
+
+<body class="index-page" ng-app="PersonManagement" ng-controller="PersonManagementController">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top navbar-transparent " color-on-scroll="50">
+    <div class="container">
+      <div class="navbar-translate">
+        <a class="navbar-brand" href="https://demos.creative-tim.com/blk-design-system/index.html" rel="tooltip" data-placement="bottom" target="_blank">
+          <span>RETRO</span> from the future to the past
+        </a>
+        <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-bar bar1"></span>
+          <span class="navbar-toggler-bar bar2"></span>
+          <span class="navbar-toggler-bar bar3"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse justify-content-end" id="navigation">
+        <div class="navbar-collapse-header">
+          <div class="row">
+            <div class="col-6 collapse-brand">
+              <a>
+                RETRO
+              </a>
+            </div>
+            <div class="col-6 collapse-close text-right">
+              <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Follow us on Twitter" data-placement="bottom" href="https://twitter.com/LoulexP" target="_blank">
+              <i class="fab fa-twitter"></i>
+              <p class="d-lg-none d-xl-none">Twitter</p>
+            </a>
+          </li>
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Like us on Facebook" data-placement="bottom" href="https://www.facebook.com/Retro-Java-bytecode-Analyser-Editor-110351490521633/" target="_blank">
+              <i class="fab fa-facebook-square"></i>
+              <p class="d-lg-none d-xl-none">Facebook</p>
+            </a>
+          </li>
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Follow us on Instagram" data-placement="bottom" href="https://www.instagram.com/retrojava/" target="_blank">
+              <i class="fab fa-instagram"></i>
+              <p class="d-lg-none d-xl-none">Instagram</p>
+            </a>
+          </li>
+          <li class="dropdown nav-item">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+              <i class="fa fa-cogs d-lg-none d-xl-none"></i> More
+            </a>
+            <div class="dropdown-menu dropdown-with-icons">
+              <a href="retroDoc/index.html" class="dropdown-item">
+                <i class="tim-icons icon-paper"></i> Documentation
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- End Navbar -->
+  <div class="wrapper">
+    <div class="page-header header-filter">
+      <div class="squares square1"></div>
+      <div class="squares square2"></div>
+      <div class="squares square3"></div>
+      <div class="squares square4"></div>
+      <div class="squares square5"></div>
+      <div class="squares square6"></div>
+      <div class="squares square7"></div>
+      <div class="container">
+        <div class="content-center brand">
+          <h1 class="h1-seo">RETRO</h1>
+          <h3>Get the old version of your Java project.</h3>
+          <a href="javascript:void(0)" onclick="scrollToDownload()"class="btn btn-primary btn-round btn-lg" role="button">
+                Retro my project !
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section section-download" id="#download-section">
+        <img src="assets/img/path1.png" class="path">
+        <div class="container">
+          <h2 class="title">Choose options for your new-old-project !</h2>
+          <br>
+          <p class="category">Pick your Java version</p>
+          <div class="row">
+            <div class="col-md-10">
+
+              <select class="mdb-select md-form">
+                <option id="java-6">Java 6</option>
+                <option id="java-7">Java 7</option>
+                <option id="java-8">Java 8</option>
+                <option id="java-9">Java 9</option>
+                <option id="java-10">Java 10</option>
+                <option id="java-11">Java 11</option>
+                <option id="java-12">Java 12</option>
+                <option id="java-13">Java 13</option>
+              </select>
+              <br>
+              <br>
+              <br>
+              <p class="category">Pick your features</p>
+              <br>
+              <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="lambdaFeature" onchange="lambdaFun()">
+                  <label class="custom-control-label" for="lambdaFeature">Lambda function</label>
+
+              </div>
+              <br>
+              <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="concatFeature" onchange="concatFun()">
+                  <label class="custom-control-label" for="concatFeature">Concatenation</label>
+              </div>
+              <br>
+              <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="nestmatesFeature" onchange="nestmatesFun()">
+                  <label class="custom-control-label" for="nestmatesFeature">Nestmate</label>
+
+              </div>
+              <br>
+              <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="twrFeature" onchange="twrFun()">
+                  <label class="custom-control-label" for="twrFeature">Try-with-ressources></label>
+              </div>
+              <br>
+              <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="recordFeature" onchange="recordFun()">
+                  <label class="custom-control-label" for="recordFeature">Record</label>
+              </div>
+              <br>
+              <br>
+              <br>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="infoBtn" onchange="infoFun()">
+                <label class="custom-control-label" for="infoBtn">Info</label>
+              </div>
+              <br>
+              <br>
+              <p class="category">Pick a file in input folder</p>
+              <div class="form-group">
+                <label for="exampleInputEmail1">File name</label>
+                <input ng-model="form" class="form-control" placeholder="Enter a .class, .jar or folder name">
+                <small id="emailHelp" class="form-text text-muted">Ready to retro-ification ?</small>
+              </div>
+
+            
+              <div class="col-sm-6 col-lg-3">
+                <p class="category"> Force </p>
+                <fieldset disabled>
+                  <input type="checkbox" name="checkbox" class="bootstrap-switch" data-on-label="OFF" data-off-label="OFF" />
+                </fieldset>
+              </div>
+              <form ng-submit="add()">
+                <button id="helpBtn" class="btn btn-secondary"> Help </button>
+              </form>
+              <br>
+             <form ng-submit="add()">
+                <button type="submit" class="btn btn-primary"> Retro !</button>
+              </form>
+
+              <br>
+              <br>
+
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <h3>Results</h3>
+              <div ng-repeat="m in message">{{m}}</div>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+            </div>
+          </div>
+      </div>
+
+      
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <h1 class="title">RETRO</h1>
+          </div>
+          <div class="col-md-3">
+            <ul class="nav">
+              <li class="nav-item">
+                <a href="http://www.u-pem.fr/" class="nav-link">
+                  About Us
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <!--   Core JS Files   -->
+  <script src="./assets/js/core/jquery.min.js" type="text/javascript"></script>
+  <script src="./assets/js/core/popper.min.js" type="text/javascript"></script>
+  <script src="./assets/js/core/bootstrap.min.js" type="text/javascript"></script>
+  <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
+  <script src="./assets/js/plugins/bootstrap-switch.js"></script>
+  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+  <script src="./assets/js/plugins/nouislider.min.js" type="text/javascript"></script>
+  <!-- Chart JS -->
+  <script src="./assets/js/plugins/chartjs.min.js"></script>
+  <!--  Plugin for the DatePicker, full documentation here: https://github.com/uxsolutions/bootstrap-datepicker -->
+  <script src="./assets/js/plugins/moment.min.js"></script>
+  <script src="./assets/js/plugins/bootstrap-datetimepicker.js" type="text/javascript"></script>
+  <!-- Black Dashboard DEMO methods, don't include it in your project! -->
+  <script src="./assets/demo/demo.js"></script>
+  <!-- Control Center for Black UI Kit: parallax effects, scripts for the example pages etc -->
+  <script src="./assets/js/blk-design-system.min.js?v=1.0.0" type="text/javascript"></script>
+  <script>
+    $(document).ready(function() {
+      blackKit.initDatePicker();
+      blackKit.initSliders();
+    });
+
+    function scrollToDownload() {
+
+      if ($('.section-download').length != 0) {
+        $("html, body").animate({
+          scrollTop: $('.section-download').offset().top
+        }, 1000);
+      }
+    }
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+
+</html>
